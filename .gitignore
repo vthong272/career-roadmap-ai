@@ -7,4 +7,3 @@ coverage/
 *.log
 .DS_Store
 Thumbs.db
-backend/prisma/migrations/migration_lock.toml

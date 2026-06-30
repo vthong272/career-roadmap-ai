@@ -5,7 +5,7 @@ SU26SWP02: Personalized Career Orientation & Learning Roadmap Platform for Softw
 ## Progress Checklist
 
 - [x] Initial project setup
-- [ ] Backend database schema and seed data
+- [x] Backend database schema and seed data
 - [ ] Auth and user profile
 - [ ] Skill gap and roadmap modules
 - [ ] AI mentor module
@@ -36,4 +36,5 @@ Backend API: `http://localhost:4000/api`
 
 ## Demo Accounts
 
-Demo users are added by the seed step once the database milestone is complete.
+- Student: `student@example.com` / `Student@123`
+- Counselor/Admin: `counselor@example.com` / `Counselor@123`

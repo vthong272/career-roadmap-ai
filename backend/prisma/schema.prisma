@@ -1,0 +1,219 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  STUDENT
+  COUNSELOR_ADMIN
+}
+
+enum SkillLevel {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum RoadmapStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  COMPLETED
+}
+
+enum ChatRole {
+  USER
+  ASSISTANT
+}
+
+enum ResourceType {
+  COURSE
+  DOCUMENTATION
+  VIDEO
+  ARTICLE
+  PROJECT
+}
+
+model User {
+  id              String            @id @default(cuid())
+  email           String            @unique
+  passwordHash    String?
+  name            String
+  role            UserRole          @default(STUDENT)
+  avatarUrl       String?
+  googleId        String?           @unique
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  profile         StudentProfile?
+  studentSkills   StudentSkill[]
+  roadmapProgress RoadmapProgress[]
+  chatMessages    ChatMessage[]
+  githubProfile   GitHubProfile?
+}
+
+model StudentProfile {
+  id              String      @id @default(cuid())
+  userId          String      @unique
+  headline        String?
+  location        String?
+  university      String?
+  major           String?
+  graduationYear  Int?
+  gpa             Float?
+  careerInterests Json        @default("[]")
+  courses         Json        @default("[]")
+  transcriptName  String?
+  targetRoleId    String?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  targetRole      CareerRole? @relation(fields: [targetRoleId], references: [id])
+  user            User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Skill {
+  id               String                 @id @default(cuid())
+  name             String                 @unique
+  category         String
+  description      String
+  createdAt        DateTime               @default(now())
+  updatedAt        DateTime               @updatedAt
+  roleRequirements RoleSkillRequirement[]
+  studentSkills    StudentSkill[]
+  learningNodes    LearningNode[]
+}
+
+model StudentSkill {
+  id        String     @id @default(cuid())
+  userId    String
+  skillId   String
+  level     SkillLevel @default(BEGINNER)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  skill     Skill      @relation(fields: [skillId], references: [id], onDelete: Cascade)
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, skillId])
+}
+
+model CareerRole {
+  id            String                 @id @default(cuid())
+  slug          String                 @unique
+  title         String
+  summary       String
+  demandLevel   String
+  createdAt     DateTime               @default(now())
+  updatedAt     DateTime               @updatedAt
+  profiles      StudentProfile[]
+  requirements  RoleSkillRequirement[]
+  learningNodes LearningNode[]
+}
+
+model RoleSkillRequirement {
+  id            String     @id @default(cuid())
+  roleId        String
+  skillId       String
+  priority      Priority
+  requiredLevel SkillLevel
+  weight        Int        @default(1)
+  role          CareerRole @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  skill         Skill      @relation(fields: [skillId], references: [id], onDelete: Cascade)
+
+  @@unique([roleId, skillId])
+}
+
+model LearningNode {
+  id             String             @id @default(cuid())
+  roleId         String
+  skillId        String?
+  parentId       String?
+  title          String
+  description    String
+  priority       Priority
+  estimatedHours Int
+  sortOrder      Int
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+  parent         LearningNode?      @relation("LearningNodeChildren", fields: [parentId], references: [id], onDelete: Cascade)
+  children       LearningNode[]     @relation("LearningNodeChildren")
+  progress       RoadmapProgress[]
+  resources      LearningResource[]
+  role           CareerRole         @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  skill          Skill?             @relation(fields: [skillId], references: [id], onDelete: SetNull)
+}
+
+model LearningResource {
+  id          String       @id @default(cuid())
+  nodeId      String
+  title       String
+  url         String
+  type        ResourceType
+  createdAt   DateTime     @default(now())
+  learningNode LearningNode @relation(fields: [nodeId], references: [id], onDelete: Cascade)
+}
+
+model RoadmapProgress {
+  id        String        @id @default(cuid())
+  userId    String
+  nodeId    String
+  status    RoadmapStatus @default(NOT_STARTED)
+  updatedAt DateTime      @updatedAt
+  node      LearningNode  @relation(fields: [nodeId], references: [id], onDelete: Cascade)
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, nodeId])
+}
+
+model ChatMessage {
+  id        String   @id @default(cuid())
+  userId    String
+  role      ChatRole
+  content   String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model GitHubProfile {
+  id          String             @id @default(cuid())
+  userId      String             @unique
+  username    String
+  displayName String?
+  bio         String?
+  avatarUrl   String?
+  htmlUrl     String
+  syncedAt    DateTime           @default(now())
+  repos       GitHubRepository[]
+  user        User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model GitHubRepository {
+  id            String        @id @default(cuid())
+  profileId     String
+  name          String
+  description   String?
+  language      String?
+  stars         Int           @default(0)
+  url           String
+  readmeSummary String?
+  profile       GitHubProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@unique([profileId, name])
+}
+
+model JobPost {
+  id          String   @id @default(cuid())
+  title       String
+  company     String
+  location    String
+  source      String
+  description String
+  postedAt    DateTime @default(now())
+}
