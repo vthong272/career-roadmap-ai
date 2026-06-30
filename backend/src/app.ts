@@ -5,7 +5,9 @@ import { env } from './config/env.js';
 import { errorHandler, notFoundHandler } from './middleware/error.js';
 import { authRouter } from './routes/auth.routes.js';
 import { catalogRouter } from './routes/catalog.routes.js';
+import { adminRouter } from './routes/admin.routes.js';
 import { healthRouter } from './routes/health.routes.js';
+import { marketRouter } from './routes/market.routes.js';
 import { mentorRouter } from './routes/mentor.routes.js';
 import { portfolioRouter } from './routes/portfolio.routes.js';
 import { profileRouter } from './routes/profile.routes.js';
@@ -25,6 +27,8 @@ export function createApp() {
   app.use('/api', roadmapRouter);
   app.use('/api', mentorRouter);
   app.use('/api', portfolioRouter);
+  app.use('/api', marketRouter);
+  app.use('/api', adminRouter);
 
   app.use(notFoundHandler);
   app.use(errorHandler);

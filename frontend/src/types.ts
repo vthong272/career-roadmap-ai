@@ -149,3 +149,35 @@ export interface GitHubPortfolio {
     } | null
   }
 }
+
+export interface JobPost {
+  id: string
+  title: string
+  company: string
+  location: string
+  source: string
+  description: string
+  postedAt: string
+}
+
+export interface MarketPulse {
+  keywords: Array<{ keyword: string; mentions: number; jobCount: number }>
+  posts: JobPost[]
+}
+
+export interface AdminSummary {
+  metrics: {
+    studentCount: number
+    roleCount: number
+    skillCount: number
+    resourceCount: number
+  }
+  students: Array<{
+    id: string
+    name: string
+    email: string
+    targetRole: string | null
+    completedNodes: number
+    inProgressNodes: number
+  }>
+}

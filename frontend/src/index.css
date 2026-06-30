@@ -733,6 +733,72 @@ td:first-child {
   text-decoration: none;
 }
 
+.trend-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.trend-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  display: grid;
+  gap: 6px;
+  padding: 14px;
+}
+
+.trend-card strong {
+  color: var(--primary);
+  font-size: 1.35rem;
+}
+
+.trend-card span {
+  color: var(--muted);
+}
+
+.job-list {
+  display: grid;
+  gap: 12px;
+}
+
+.job-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  display: grid;
+  gap: 8px;
+  padding: 16px;
+}
+
+.job-card div {
+  align-items: center;
+  display: flex;
+  gap: 10px;
+}
+
+.job-card p {
+  color: var(--muted);
+}
+
+.admin-grid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.admin-form {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  display: grid;
+  gap: 14px;
+  padding: 16px;
+}
+
 .roadmap-node {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -895,7 +961,9 @@ td:first-child {
   .skill-matrix,
   .two-columns,
   .dashboard-grid,
-  .repo-grid {
+  .repo-grid,
+  .trend-grid,
+  .admin-grid {
     grid-template-columns: 1fr;
   }
 }

@@ -12,6 +12,8 @@ const PortfolioPage = lazy(() => import('./features/portfolio/PortfolioPage').th
 const PublicPortfolioPage = lazy(() =>
   import('./features/portfolio/PublicPortfolioPage').then((module) => ({ default: module.PublicPortfolioPage })),
 )
+const MarketPulsePage = lazy(() => import('./features/market/MarketPulsePage').then((module) => ({ default: module.MarketPulsePage })))
+const AdminPage = lazy(() => import('./features/admin/AdminPage').then((module) => ({ default: module.AdminPage })))
 
 const pageLabels: Record<PageKey, string> = {
   profile: 'Profile',
@@ -63,6 +65,20 @@ function Workspace() {
       return (
         <Suspense fallback={<section className="panel">Loading portfolio...</section>}>
           <PortfolioPage />
+        </Suspense>
+      )
+    }
+    if (page === 'market') {
+      return (
+        <Suspense fallback={<section className="panel">Loading market pulse...</section>}>
+          <MarketPulsePage />
+        </Suspense>
+      )
+    }
+    if (page === 'admin') {
+      return (
+        <Suspense fallback={<section className="panel">Loading admin...</section>}>
+          <AdminPage />
         </Suspense>
       )
     }
