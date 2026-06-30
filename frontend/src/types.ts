@@ -119,3 +119,33 @@ export interface ChatMessage {
   content: string
   createdAt: string
 }
+
+export interface GitHubRepository {
+  id: string
+  name: string
+  description: string | null
+  language: string | null
+  stars: number
+  url: string
+  readmeSummary: string | null
+}
+
+export interface GitHubPortfolio {
+  id: string
+  username: string
+  displayName: string | null
+  bio: string | null
+  avatarUrl: string | null
+  htmlUrl: string
+  syncedAt: string
+  repos: GitHubRepository[]
+  user?: {
+    name: string
+    profile: {
+      headline: string | null
+      university: string | null
+      major: string | null
+      targetRole: { title: string } | null
+    } | null
+  }
+}

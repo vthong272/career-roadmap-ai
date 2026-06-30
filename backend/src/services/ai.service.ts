@@ -131,6 +131,45 @@ async function generateMentorAnswer(context: MentorContext, question: string) {
   return createFallbackMentorAnswer(context, question);
 }
 
+export function createReadmeFallbackSummary(repoName: string, description: string | null, readme: string | null) {
+  const source = `${description ?? ''}\n${readme ?? ''}`.trim();
+  const techMatches = source.match(/\b(React|TypeScript|JavaScript|Node\.js|Express|PostgreSQL|Prisma|Docker|AWS|Java|Spring Boot|Python|SQL|Tailwind|Vite)\b/gi);
+  const uniqueTech = [...new Set((techMatches ?? []).map((tech) => tech.trim()))].slice(0, 6);
+  const firstUsefulLine =
+    readme
+      ?.split('\n')
+      .map((line) => line.replace(/^#+\s*/, '').trim())
+      .find((line) => line.length > 24 && !line.startsWith('![')) ?? description;
+
+  return [
+    firstUsefulLine ? `Objective: ${firstUsefulLine.slice(0, 180)}` : `Objective: Public repository ${repoName}.`,
+    `Tech stack signals: ${uniqueTech.length > 0 ? uniqueTech.join(', ') : 'Not explicit in README'}.`
+  ].join(' ');
+}
+
+export async function summarizeProjectReadme(repoName: string, description: string | null, readme: string | null) {
+  const fallback = createReadmeFallbackSummary(repoName, description, readme);
+  if (!readme || env.AI_PROVIDER === 'fallback') {
+    return fallback;
+  }
+
+  const prompt = `Summarize this GitHub project for a student e-portfolio in two short sentences.
+Repository: ${repoName}
+Description: ${description ?? 'None'}
+README:
+${readme.slice(0, 6000)}`;
+
+  if (env.AI_PROVIDER === 'openai') {
+    return (await callOpenAI(prompt)) ?? fallback;
+  }
+
+  if (env.AI_PROVIDER === 'gemini') {
+    return (await callGemini(prompt)) ?? fallback;
+  }
+
+  return fallback;
+}
+
 export async function getMentorHistory(userId: string) {
   return prisma.chatMessage.findMany({
     where: { userId },

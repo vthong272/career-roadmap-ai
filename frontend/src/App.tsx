@@ -8,6 +8,10 @@ import './index.css'
 const SkillGapPage = lazy(() => import('./features/gap/SkillGapPage').then((module) => ({ default: module.SkillGapPage })))
 const RoadmapPage = lazy(() => import('./features/roadmap/RoadmapPage').then((module) => ({ default: module.RoadmapPage })))
 const MentorPage = lazy(() => import('./features/mentor/MentorPage').then((module) => ({ default: module.MentorPage })))
+const PortfolioPage = lazy(() => import('./features/portfolio/PortfolioPage').then((module) => ({ default: module.PortfolioPage })))
+const PublicPortfolioPage = lazy(() =>
+  import('./features/portfolio/PublicPortfolioPage').then((module) => ({ default: module.PublicPortfolioPage })),
+)
 
 const pageLabels: Record<PageKey, string> = {
   profile: 'Profile',
@@ -55,6 +59,13 @@ function Workspace() {
         </Suspense>
       )
     }
+    if (page === 'portfolio') {
+      return (
+        <Suspense fallback={<section className="panel">Loading portfolio...</section>}>
+          <PortfolioPage />
+        </Suspense>
+      )
+    }
 
     return (
       <section className="panel">
@@ -69,6 +80,15 @@ function Workspace() {
 }
 
 function App() {
+  const publicMatch = window.location.pathname.match(/^\/portfolio\/([^/]+)$/)
+  if (publicMatch) {
+    return (
+      <Suspense fallback={<main className="loading-screen">Loading portfolio...</main>}>
+        <PublicPortfolioPage username={decodeURIComponent(publicMatch[1])} />
+      </Suspense>
+    )
+  }
+
   return (
     <AuthProvider>
       <Workspace />

@@ -613,6 +613,126 @@ td:first-child {
   padding: 16px;
 }
 
+.sync-panel,
+.portfolio-hero,
+.public-profile {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+}
+
+.sync-panel {
+  align-items: end;
+  display: grid;
+  gap: 14px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  padding: 16px;
+}
+
+.portfolio-hero,
+.public-profile {
+  align-items: center;
+  display: grid;
+  gap: 18px;
+  grid-template-columns: 92px minmax(0, 1fr);
+  padding: 20px;
+}
+
+.portfolio-hero img,
+.public-profile img {
+  border-radius: 8px;
+  height: 92px;
+  object-fit: cover;
+  width: 92px;
+}
+
+.portfolio-hero div,
+.public-profile div {
+  display: grid;
+  gap: 10px;
+}
+
+.repo-grid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.repo-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  display: grid;
+  gap: 12px;
+  min-height: 230px;
+  padding: 16px;
+}
+
+.repo-heading,
+.repo-footer {
+  align-items: center;
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
+}
+
+.repo-heading h3 {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.repo-heading span,
+.repo-footer span,
+.repo-footer a {
+  align-items: center;
+  display: inline-flex;
+  gap: 5px;
+}
+
+.repo-card p {
+  color: var(--muted);
+}
+
+.repo-footer {
+  align-self: end;
+  border-top: 1px solid var(--border);
+  padding-top: 10px;
+}
+
+.repo-footer a {
+  background: var(--surface-muted);
+  border-radius: 999px;
+  color: var(--text);
+  height: 34px;
+  justify-content: center;
+  width: 34px;
+}
+
+.public-page {
+  display: grid;
+  gap: 22px;
+  margin: 0 auto;
+  max-width: 1120px;
+  min-height: 100vh;
+  padding: 28px;
+}
+
+.public-profile {
+  grid-template-columns: 120px minmax(0, 1fr);
+}
+
+.public-profile img {
+  height: 120px;
+  width: 120px;
+}
+
+.public-link {
+  justify-self: start;
+  text-decoration: none;
+}
+
 .roadmap-node {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -774,7 +894,8 @@ td:first-child {
 
   .skill-matrix,
   .two-columns,
-  .dashboard-grid {
+  .dashboard-grid,
+  .repo-grid {
     grid-template-columns: 1fr;
   }
 }
@@ -829,6 +950,12 @@ td:first-child {
   }
 
   .chat-input {
+    grid-template-columns: 1fr;
+  }
+
+  .sync-panel,
+  .portfolio-hero,
+  .public-profile {
     grid-template-columns: 1fr;
   }
 }
