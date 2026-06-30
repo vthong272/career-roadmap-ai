@@ -35,6 +35,15 @@ textarea {
   font: inherit;
 }
 
+button {
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
 a {
   color: inherit;
 }
@@ -63,7 +72,12 @@ p {
 
 .brand-mark,
 .status-pill,
-.activity-panel > div {
+.activity-panel > div,
+.primary-button,
+.icon-button,
+.form-error,
+.form-success,
+.account-box {
   align-items: center;
   display: flex;
   gap: 10px;
@@ -86,18 +100,21 @@ p {
   gap: 8px;
 }
 
-.nav-list a {
+.nav-list button {
   align-items: center;
   border-radius: 8px;
+  border: 0;
   color: #363530;
   display: flex;
   gap: 10px;
   padding: 10px 12px;
-  text-decoration: none;
+  text-align: left;
+  background: transparent;
 }
 
-.nav-list a:focus-visible,
-.nav-list a:hover {
+.nav-list button.active,
+.nav-list button:focus-visible,
+.nav-list button:hover {
   background: var(--surface);
   outline: 2px solid transparent;
 }
@@ -109,6 +126,13 @@ p {
 }
 
 .topbar {
+  align-items: flex-start;
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+}
+
+.page-header {
   align-items: flex-start;
   display: flex;
   gap: 16px;
@@ -133,6 +157,59 @@ h2 {
   font-size: 1rem;
 }
 
+.account-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 10px 8px 14px;
+}
+
+.account-box div {
+  display: grid;
+  gap: 2px;
+}
+
+.account-box span,
+.form-section p,
+.panel p,
+.auth-intro p {
+  color: var(--muted);
+}
+
+.icon-button,
+.primary-button,
+.segmented-control button,
+.demo-actions button {
+  border-radius: 8px;
+  min-height: 40px;
+}
+
+.icon-button {
+  background: var(--surface-muted);
+  border: 1px solid var(--border);
+  color: var(--text);
+  justify-content: center;
+  width: 40px;
+}
+
+.primary-button {
+  background: var(--primary);
+  border: 1px solid var(--primary);
+  color: #ffffff;
+  font-weight: 800;
+  justify-content: center;
+  padding: 0 14px;
+}
+
+.primary-button:focus-visible,
+.icon-button:focus-visible,
+.segmented-control button:focus-visible,
+.demo-actions button:focus-visible,
+.nav-list button:focus-visible {
+  outline: 3px solid #9ed9d1;
+  outline-offset: 2px;
+}
+
 .status-pill {
   background: var(--primary-soft);
   border: 1px solid #9ed9d1;
@@ -141,6 +218,208 @@ h2 {
   font-size: 0.9rem;
   padding: 8px 12px;
   white-space: nowrap;
+}
+
+.loading-screen,
+.auth-screen {
+  min-height: 100vh;
+}
+
+.loading-screen {
+  align-items: center;
+  display: grid;
+  justify-items: center;
+}
+
+.auth-screen {
+  align-items: center;
+  display: grid;
+  gap: 28px;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 420px);
+  margin: 0 auto;
+  max-width: 1120px;
+  padding: 28px;
+}
+
+.auth-intro {
+  display: grid;
+  gap: 18px;
+  max-width: 620px;
+}
+
+.auth-intro h1 {
+  font-size: 2.4rem;
+}
+
+.auth-panel,
+.panel,
+.form-section {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+}
+
+.auth-panel {
+  display: grid;
+  gap: 18px;
+  padding: 22px;
+}
+
+.segmented-control {
+  background: var(--surface-muted);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  padding: 4px;
+}
+
+.segmented-control button {
+  background: transparent;
+  border: 0;
+}
+
+.segmented-control button.active {
+  background: var(--surface);
+  box-shadow: 0 1px 4px rgba(35, 35, 35, 0.12);
+  font-weight: 800;
+}
+
+.form-grid {
+  display: grid;
+  gap: 14px;
+}
+
+.two-columns {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+label {
+  color: #3b3a35;
+  display: grid;
+  font-weight: 700;
+  gap: 7px;
+}
+
+input,
+select,
+textarea {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  min-height: 40px;
+  padding: 9px 11px;
+  width: 100%;
+}
+
+textarea {
+  resize: vertical;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--primary);
+  outline: 3px solid #d9f2ee;
+}
+
+.form-error,
+.form-success {
+  border-radius: 8px;
+  font-weight: 700;
+  padding: 10px 12px;
+}
+
+.form-error {
+  background: #fff1f0;
+  border: 1px solid #ffccc7;
+  color: var(--danger);
+}
+
+.form-success {
+  background: #e9f8f2;
+  border: 1px solid #a6e5ca;
+  color: #176246;
+}
+
+.demo-actions {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.demo-actions button {
+  background: var(--surface-muted);
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+
+.page-stack {
+  display: grid;
+  gap: 18px;
+}
+
+.panel {
+  display: grid;
+  gap: 10px;
+  padding: 22px;
+}
+
+.form-section {
+  display: grid;
+  gap: 18px;
+  grid-template-columns: 260px minmax(0, 1fr);
+  padding: 20px;
+}
+
+.input-with-icon {
+  align-items: center;
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr);
+}
+
+.input-with-icon svg {
+  color: var(--muted);
+}
+
+.input-with-icon input {
+  grid-column: 1 / -1;
+  padding-left: 36px;
+}
+
+.input-with-icon svg {
+  grid-column: 1;
+  grid-row: 1;
+  margin-left: 12px;
+  z-index: 1;
+}
+
+.skill-matrix {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.skill-group {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+}
+
+.skill-group h3 {
+  margin: 0;
+}
+
+.skill-row {
+  align-items: center;
+  display: grid;
+  font-weight: 600;
+  gap: 10px;
+  grid-template-columns: minmax(0, 1fr) 150px;
 }
 
 .summary-grid {
@@ -200,8 +479,22 @@ h2 {
     display: grid;
   }
 
+  .page-header,
+  .form-section {
+    grid-template-columns: 1fr;
+  }
+
   .summary-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .auth-screen {
+    grid-template-columns: 1fr;
+  }
+
+  .skill-matrix,
+  .two-columns {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -222,5 +515,23 @@ h2 {
 
   .status-pill {
     white-space: normal;
+  }
+
+  .auth-screen {
+    padding: 18px;
+  }
+
+  .auth-intro h1 {
+    font-size: 1.7rem;
+  }
+
+  .account-box,
+  .page-header {
+    align-items: stretch;
+    display: grid;
+  }
+
+  .skill-row {
+    grid-template-columns: 1fr;
   }
 }
