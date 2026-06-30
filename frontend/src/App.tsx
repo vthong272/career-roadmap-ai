@@ -1,8 +1,12 @@
+import { Suspense, lazy } from 'react'
 import { AuthPanel } from './features/auth/AuthPanel'
 import { AuthProvider, useAuth } from './features/auth/AuthContext'
 import { ProfilePage } from './features/profile/ProfilePage'
 import { Layout, type PageKey } from './components/Layout'
 import './index.css'
+
+const SkillGapPage = lazy(() => import('./features/gap/SkillGapPage').then((module) => ({ default: module.SkillGapPage })))
+const RoadmapPage = lazy(() => import('./features/roadmap/RoadmapPage').then((module) => ({ default: module.RoadmapPage })))
 
 const pageLabels: Record<PageKey, string> = {
   profile: 'Profile',
@@ -28,6 +32,20 @@ function Workspace() {
   function renderPage(page: PageKey) {
     if (page === 'profile') {
       return <ProfilePage />
+    }
+    if (page === 'gap') {
+      return (
+        <Suspense fallback={<section className="panel">Loading skill gap...</section>}>
+          <SkillGapPage />
+        </Suspense>
+      )
+    }
+    if (page === 'roadmap') {
+      return (
+        <Suspense fallback={<section className="panel">Loading roadmap...</section>}>
+          <RoadmapPage />
+        </Suspense>
+      )
     }
 
     return (

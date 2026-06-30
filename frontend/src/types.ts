@@ -1,6 +1,7 @@
 export type UserRole = 'STUDENT' | 'COUNSELOR_ADMIN'
 export type SkillLevel = 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED'
 export type Priority = 'LOW' | 'MEDIUM' | 'HIGH'
+export type RoadmapStatus = 'NOT_STARTED' | 'IN_PROGRESS' | 'COMPLETED'
 
 export interface User {
   id: string
@@ -64,4 +65,50 @@ export interface ProfileResponse {
   avatarUrl: string | null
   profile: StudentProfileRecord | null
   studentSkills: StudentSkill[]
+}
+
+export interface SkillGapItem {
+  skillId: string
+  name: string
+  category: string
+  priority: Priority
+  requiredLevel: SkillLevel
+  currentLevel: SkillLevel | null
+  weight: number
+  status: 'MATCHED' | 'BELOW_LEVEL' | 'MISSING'
+}
+
+export interface SkillGapAnalysis {
+  role: CareerRole
+  readinessScore: number
+  matchedSkills: SkillGapItem[]
+  belowLevelSkills: SkillGapItem[]
+  missingSkills: SkillGapItem[]
+  items: SkillGapItem[]
+}
+
+export interface LearningResource {
+  id: string
+  title: string
+  url: string
+  type: 'COURSE' | 'DOCUMENTATION' | 'VIDEO' | 'ARTICLE' | 'PROJECT'
+}
+
+export interface RoadmapNode {
+  id: string
+  title: string
+  description: string
+  priority: Priority
+  estimatedHours: number
+  sortOrder: number
+  parentId: string | null
+  status: RoadmapStatus
+  skill: Skill | null
+  resources: LearningResource[]
+}
+
+export interface RoadmapResponse {
+  role: CareerRole
+  nodes: RoadmapNode[]
+  progressSummary: Record<RoadmapStatus, number>
 }
