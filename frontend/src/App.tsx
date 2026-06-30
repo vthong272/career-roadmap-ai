@@ -7,6 +7,7 @@ import './index.css'
 
 const SkillGapPage = lazy(() => import('./features/gap/SkillGapPage').then((module) => ({ default: module.SkillGapPage })))
 const RoadmapPage = lazy(() => import('./features/roadmap/RoadmapPage').then((module) => ({ default: module.RoadmapPage })))
+const MentorPage = lazy(() => import('./features/mentor/MentorPage').then((module) => ({ default: module.MentorPage })))
 
 const pageLabels: Record<PageKey, string> = {
   profile: 'Profile',
@@ -44,6 +45,13 @@ function Workspace() {
       return (
         <Suspense fallback={<section className="panel">Loading roadmap...</section>}>
           <RoadmapPage />
+        </Suspense>
+      )
+    }
+    if (page === 'mentor') {
+      return (
+        <Suspense fallback={<section className="panel">Loading mentor...</section>}>
+          <MentorPage />
         </Suspense>
       )
     }

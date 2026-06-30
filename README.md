@@ -8,7 +8,7 @@ SU26SWP02: Personalized Career Orientation & Learning Roadmap Platform for Softw
 - [x] Backend database schema and seed data
 - [x] Auth and user profile
 - [x] Skill gap and roadmap modules
-- [ ] AI mentor module
+- [x] AI mentor module
 - [ ] GitHub portfolio module
 - [ ] Market pulse dashboard
 - [ ] Polish README and final verification

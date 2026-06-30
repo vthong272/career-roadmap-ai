@@ -6,6 +6,7 @@ import { errorHandler, notFoundHandler } from './middleware/error.js';
 import { authRouter } from './routes/auth.routes.js';
 import { catalogRouter } from './routes/catalog.routes.js';
 import { healthRouter } from './routes/health.routes.js';
+import { mentorRouter } from './routes/mentor.routes.js';
 import { profileRouter } from './routes/profile.routes.js';
 import { roadmapRouter } from './routes/roadmap.routes.js';
 
@@ -21,6 +22,7 @@ export function createApp() {
   app.use('/api/profile', profileRouter);
   app.use('/api', catalogRouter);
   app.use('/api', roadmapRouter);
+  app.use('/api', mentorRouter);
 
   app.use(notFoundHandler);
   app.use(errorHandler);

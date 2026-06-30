@@ -112,3 +112,10 @@ export interface RoadmapResponse {
   nodes: RoadmapNode[]
   progressSummary: Record<RoadmapStatus, number>
 }
+
+export interface ChatMessage {
+  id: string
+  role: 'USER' | 'ASSISTANT'
+  content: string
+  createdAt: string
+}
