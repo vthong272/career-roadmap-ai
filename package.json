@@ -13,6 +13,7 @@
     "test": "npm run test --workspaces --if-present",
     "lint": "npm run lint --workspaces --if-present",
     "prisma:generate": "npm run prisma:generate --workspace backend",
+    "prisma:deploy": "npm run prisma:deploy --workspace backend",
     "prisma:migrate": "npm run prisma:migrate --workspace backend",
     "prisma:seed": "npm run prisma:seed --workspace backend"
   },
