@@ -15,7 +15,8 @@
     "prisma:generate": "npm run prisma:generate --workspace backend",
     "prisma:deploy": "npm run prisma:deploy --workspace backend",
     "prisma:migrate": "npm run prisma:migrate --workspace backend",
-    "prisma:seed": "npm run prisma:seed --workspace backend"
+    "prisma:seed": "npm run prisma:seed --workspace backend",
+    "prisma:seed:demo-users": "npm run prisma:seed:demo-users --workspace backend"
   },
   "devDependencies": {
     "concurrently": "^9.2.1",
