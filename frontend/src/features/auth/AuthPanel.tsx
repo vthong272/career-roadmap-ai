@@ -1,14 +1,14 @@
 import { useState } from 'react'
-import { AlertCircle, GraduationCap, LogIn } from 'lucide-react'
+import { AlertCircle, BarChart3, GraduationCap, LogIn, Route, Sparkles } from 'lucide-react'
 import { ApiClientError } from '../../api'
 import { useAuth } from './AuthContext'
 
 export function AuthPanel() {
   const { login, register } = useAuth()
   const [mode, setMode] = useState<'login' | 'register'>('login')
-  const [name, setName] = useState('Software Engineering Student')
-  const [email, setEmail] = useState('student@example.com')
-  const [password, setPassword] = useState('Student@123')
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -31,17 +31,42 @@ export function AuthPanel() {
   return (
     <main className="auth-screen">
       <section className="auth-intro">
-        <div className="brand-mark">
-          <GraduationCap size={24} aria-hidden="true" />
-          <span>Career Roadmap AI</span>
+        <div className="brand-block">
+          <div className="brand-mark">
+            <GraduationCap size={24} aria-hidden="true" />
+            <span>Career Roadmap AI</span>
+          </div>
+          <p>Personalized career orientation for software engineering students</p>
         </div>
-        <h1>Career orientation workspace for software engineering students</h1>
+        <h1>Plan the role, close the skill gap, prove the portfolio.</h1>
         <p>
-          Select a target role, compare current skills, plan learning work, and turn projects into a shareable portfolio.
+          A focused workspace for students to pick a target role, compare current skills, follow a generated learning roadmap,
+          ask an AI mentor, and publish GitHub evidence.
         </p>
+        <div className="auth-value-grid" aria-label="Platform highlights">
+          <article>
+            <BarChart3 size={18} aria-hidden="true" />
+            <strong>Gap score</strong>
+            <span>Compare required and current skills.</span>
+          </article>
+          <article>
+            <Route size={18} aria-hidden="true" />
+            <strong>Roadmap</strong>
+            <span>Track learning nodes and resources.</span>
+          </article>
+          <article>
+            <Sparkles size={18} aria-hidden="true" />
+            <strong>AI mentor</strong>
+            <span>Get weekly prioritization guidance.</span>
+          </article>
+        </div>
       </section>
 
       <section className="auth-panel" aria-labelledby="auth-title">
+        <div>
+          <p className="eyebrow">Secure workspace</p>
+          <h2 id="auth-title">{mode === 'login' ? 'Welcome back' : 'Create student account'}</h2>
+        </div>
         <div className="segmented-control" role="tablist" aria-label="Authentication mode">
           <button type="button" className={mode === 'login' ? 'active' : ''} onClick={() => setMode('login')}>
             Login
@@ -51,7 +76,6 @@ export function AuthPanel() {
           </button>
         </div>
 
-        <h2 id="auth-title">{mode === 'login' ? 'Welcome back' : 'Create student account'}</h2>
         <form
           className="form-grid"
           onSubmit={(event) => {
@@ -91,26 +115,6 @@ export function AuthPanel() {
           </button>
         </form>
 
-        <div className="demo-actions">
-          <button
-            type="button"
-            onClick={() => {
-              setEmail('student@example.com')
-              setPassword('Student@123')
-            }}
-          >
-            Student demo
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              setEmail('counselor@example.com')
-              setPassword('Counselor@123')
-            }}
-          >
-            Admin demo
-          </button>
-        </div>
       </section>
     </main>
   )

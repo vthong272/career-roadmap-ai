@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Save, Upload } from 'lucide-react'
+import { BookOpen, BriefcaseBusiness, Save, Upload, UserRound } from 'lucide-react'
 import { ApiClientError } from '../../api'
 import type { CareerRole, ProfileResponse, Skill, SkillLevel } from '../../types'
 import { useAuth } from '../auth/AuthContext'
@@ -130,12 +130,37 @@ export function ProfilePage() {
         <div>
           <p className="eyebrow">Student profile</p>
           <h1 id="profile-title">Academic and career baseline</h1>
+          <p>Keep this profile current so gap analysis, roadmap generation, and mentor answers use the right context.</p>
         </div>
         <button className="primary-button" type="button" onClick={() => void saveProfile()} disabled={isSaving}>
           <Save size={18} aria-hidden="true" />
           {isSaving ? 'Saving...' : 'Save profile'}
         </button>
       </header>
+
+      <section className="metric-strip" aria-label="Profile summary">
+        <article>
+          <UserRound size={18} aria-hidden="true" />
+          <div>
+            <strong>{profile.name}</strong>
+            <span>{profile.email}</span>
+          </div>
+        </article>
+        <article>
+          <BriefcaseBusiness size={18} aria-hidden="true" />
+          <div>
+            <strong>{profile.profile?.targetRole?.title ?? 'No target role'}</strong>
+            <span>Career direction</span>
+          </div>
+        </article>
+        <article>
+          <BookOpen size={18} aria-hidden="true" />
+          <div>
+            <strong>{profile.studentSkills.length}</strong>
+            <span>Saved skills</span>
+          </div>
+        </article>
+      </section>
 
       {(error || message) && (
         <p className={error ? 'form-error' : 'form-success'} role="status">

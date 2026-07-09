@@ -48,6 +48,7 @@ export function MentorPage() {
         <div>
           <p className="eyebrow">AI virtual mentor</p>
           <h1 id="mentor-title">Career guidance chat</h1>
+          <p>Ask for next actions, project scope, interview preparation, or how to turn roadmap work into portfolio evidence.</p>
         </div>
       </header>
 
@@ -64,6 +65,17 @@ export function MentorPage() {
             <Bot size={28} aria-hidden="true" />
             <h2>No mentor messages yet</h2>
             <p>Ask a career question after selecting a target role and saving profile skills.</p>
+            <div className="prompt-grid" aria-label="Suggested mentor prompts">
+              {[
+                'What should I learn first this week?',
+                'Which project proves my target role best?',
+                'How do I explain my skill gaps in an interview?',
+              ].map((prompt) => (
+                <button type="button" key={prompt} onClick={() => setMessage(prompt)}>
+                  {prompt}
+                </button>
+              ))}
+            </div>
           </div>
         ) : (
           history.map((chat) => (

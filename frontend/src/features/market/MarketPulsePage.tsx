@@ -36,8 +36,33 @@ export function MarketPulsePage() {
         <div>
           <p className="eyebrow">Market pulse</p>
           <h1 id="market-title">Technology demand from sample job posts</h1>
+          <p>Use these signals to tune your target role, roadmap focus, and portfolio project keywords.</p>
         </div>
       </header>
+
+      <section className="metric-strip" aria-label="Market pulse summary">
+        <article>
+          <BriefcaseBusiness size={18} aria-hidden="true" />
+          <div>
+            <strong>{market.posts.length}</strong>
+            <span>Sample posts</span>
+          </div>
+        </article>
+        <article>
+          <BriefcaseBusiness size={18} aria-hidden="true" />
+          <div>
+            <strong>{market.keywords.length}</strong>
+            <span>Tracked keywords</span>
+          </div>
+        </article>
+        <article>
+          <BriefcaseBusiness size={18} aria-hidden="true" />
+          <div>
+            <strong>{market.keywords[0]?.keyword ?? 'No keyword'}</strong>
+            <span>Top demand signal</span>
+          </div>
+        </article>
+      </section>
 
       <section className="chart-panel">
         <h2>Keyword frequency</h2>

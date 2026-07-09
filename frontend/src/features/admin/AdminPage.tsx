@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { ReactNode } from 'react'
 import { Plus, ShieldCheck } from 'lucide-react'
 import { ApiClientError } from '../../api'
@@ -31,7 +31,7 @@ export function AdminPage() {
 
   const nodes = useMemo(() => roles.flatMap((role) => role.learningNodes.map((node) => ({ ...node, roleTitle: role.title }))), [roles])
 
-  async function loadAdminData() {
+  const loadAdminData = useCallback(async () => {
     const [summaryPayload, managementPayload] = await Promise.all([
       request<{ summary: AdminSummary }>('/admin/summary'),
       request<{ roles: ManagementRole[]; skills: Skill[] }>('/admin/management-data'),
@@ -39,12 +39,12 @@ export function AdminPage() {
     setSummary(summaryPayload.summary)
     setRoles(managementPayload.roles)
     setSkills(managementPayload.skills)
-  }
+  }, [request])
 
   useEffect(() => {
     if (user?.role !== 'COUNSELOR_ADMIN') return
     loadAdminData().catch((err) => setError(err instanceof ApiClientError ? err.message : 'Could not load admin data'))
-  }, [request, user?.role])
+  }, [loadAdminData, user?.role])
 
   async function createResource(path: string, body: unknown, success: string) {
     setError(null)
@@ -74,6 +74,7 @@ export function AdminPage() {
         <div>
           <p className="eyebrow">Counselor/Admin</p>
           <h1 id="admin-title">Progress summary and content management</h1>
+          <p>Maintain role requirements, skill definitions, learning nodes, and resources used by student roadmaps.</p>
         </div>
       </header>
 

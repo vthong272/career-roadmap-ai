@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { AlertCircle, CheckCircle2, Clock, ExternalLink } from 'lucide-react'
+import { AlertCircle, CheckCircle2, Clock, ExternalLink, Route } from 'lucide-react'
 import { ApiClientError } from '../../api'
 import type { RoadmapResponse, RoadmapStatus } from '../../types'
 import { useAuth } from '../auth/AuthContext'
@@ -62,12 +62,37 @@ export function RoadmapPage() {
         <div>
           <p className="eyebrow">Dynamic learning roadmap</p>
           <h1 id="roadmap-title">{roadmap.role.title}</h1>
+          <p>Work through each node, update progress, and use the linked resources as evidence for your portfolio.</p>
         </div>
         <div className="score-tile">
           <strong>{percent}%</strong>
           <span>Completed</span>
         </div>
       </header>
+
+      <section className="metric-strip" aria-label="Roadmap progress summary">
+        <article>
+          <CheckCircle2 size={18} aria-hidden="true" />
+          <div>
+            <strong>{roadmap.progressSummary.COMPLETED}</strong>
+            <span>Completed</span>
+          </div>
+        </article>
+        <article>
+          <Clock size={18} aria-hidden="true" />
+          <div>
+            <strong>{roadmap.progressSummary.IN_PROGRESS}</strong>
+            <span>In progress</span>
+          </div>
+        </article>
+        <article>
+          <Route size={18} aria-hidden="true" />
+          <div>
+            <strong>{roadmap.progressSummary.NOT_STARTED}</strong>
+            <span>Not started</span>
+          </div>
+        </article>
+      </section>
 
       {error && (
         <p className="form-error" role="status">
@@ -98,14 +123,16 @@ export function RoadmapPage() {
                 </span>
                 {node.skill && <span>{node.skill.name}</span>}
               </div>
-              <div className="resource-list">
-                {node.resources.map((resource) => (
-                  <a href={resource.url} target="_blank" rel="noreferrer" key={resource.id}>
-                    <ExternalLink size={15} aria-hidden="true" />
-                    {resource.title}
-                  </a>
-                ))}
-              </div>
+              {node.resources.length > 0 && (
+                <div className="resource-list">
+                  {node.resources.map((resource) => (
+                    <a href={resource.url} target="_blank" rel="noreferrer" key={resource.id}>
+                      <ExternalLink size={15} aria-hidden="true" />
+                      {resource.title}
+                    </a>
+                  ))}
+                </div>
+              )}
               <div className="status-actions" aria-label={`${node.title} progress`}>
                 {statusOptions.map((status) => (
                   <button

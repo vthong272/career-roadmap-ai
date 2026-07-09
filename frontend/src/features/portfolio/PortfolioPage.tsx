@@ -48,6 +48,7 @@ export function PortfolioPage() {
         <div>
           <p className="eyebrow">GitHub portfolio</p>
           <h1 id="portfolio-title">Repository sync and share page</h1>
+          <p>Sync public repositories, review generated summaries, and share an evidence page for counselors or recruiters.</p>
         </div>
       </header>
 
@@ -76,6 +77,11 @@ export function PortfolioPage() {
             <div>
               <h2>{portfolio.displayName ?? portfolio.username}</h2>
               <p>{portfolio.bio ?? 'Public GitHub portfolio synced for career presentation.'}</p>
+              <div className="metric-inline" aria-label="Portfolio metrics">
+                <span>{portfolio.repos.length} repositories</span>
+                <span>{portfolio.repos.reduce((total, repo) => total + repo.stars, 0)} stars</span>
+                <span>Synced {new Date(portfolio.syncedAt).toLocaleDateString()}</span>
+              </div>
               <div className="resource-list">
                 <a href={portfolio.htmlUrl} target="_blank" rel="noreferrer">
                   <Github size={15} aria-hidden="true" />

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Bar, BarChart, CartesianGrid, Cell, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
-import { AlertCircle, FileText } from 'lucide-react'
+import { AlertCircle, CheckCircle2, FileText, TrendingUp } from 'lucide-react'
 import { ApiClientError } from '../../api'
 import type { SkillGapAnalysis } from '../../types'
 import { useAuth } from '../auth/AuthContext'
@@ -66,12 +66,37 @@ export function SkillGapPage() {
         <div>
           <p className="eyebrow">Skill gap analysis</p>
           <h1 id="gap-title">{analysis.role.title}</h1>
+          <p>Readiness is calculated from role requirements, skill priority, and your saved current levels.</p>
         </div>
         <div className="score-tile">
           <strong>{analysis.readinessScore}%</strong>
           <span>Readiness</span>
         </div>
       </header>
+
+      <section className="metric-strip" aria-label="Skill gap summary">
+        <article>
+          <CheckCircle2 size={18} aria-hidden="true" />
+          <div>
+            <strong>{analysis.matchedSkills.length}</strong>
+            <span>Matched skills</span>
+          </div>
+        </article>
+        <article>
+          <TrendingUp size={18} aria-hidden="true" />
+          <div>
+            <strong>{analysis.belowLevelSkills.length}</strong>
+            <span>Below target level</span>
+          </div>
+        </article>
+        <article>
+          <AlertCircle size={18} aria-hidden="true" />
+          <div>
+            <strong>{analysis.missingSkills.length}</strong>
+            <span>Missing skills</span>
+          </div>
+        </article>
+      </section>
 
       <section className="dashboard-grid">
         <article className="chart-panel">
