@@ -1,7 +1,7 @@
 import { useState } from 'react'
-import { AlertCircle, BarChart3, GraduationCap, LogIn, Route, Sparkles } from 'lucide-react'
+import { AlertCircle, BarChart3, GraduationCap, LogIn, Route, ShieldCheck, Sparkles, UserRound } from 'lucide-react'
 import { ApiClientError } from '../../api'
-import { useAuth } from './AuthContext'
+import { useAuth } from './auth-context'
 
 export function AuthPanel() {
   const { login, register } = useAuth()
@@ -11,6 +11,14 @@ export function AuthPanel() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
+
+  function fillDemoAccount(kind: 'student' | 'counselor') {
+    setMode('login')
+    setName('')
+    setEmail(kind === 'student' ? 'student@example.com' : 'counselor@example.com')
+    setPassword(kind === 'student' ? 'Student@123' : 'Counselor@123')
+    setError(null)
+  }
 
   async function submit() {
     setError(null)
@@ -73,6 +81,23 @@ export function AuthPanel() {
           </button>
           <button type="button" className={mode === 'register' ? 'active' : ''} onClick={() => setMode('register')}>
             Register
+          </button>
+        </div>
+
+        <div className="demo-login-grid" aria-label="Demo accounts">
+          <button type="button" onClick={() => fillDemoAccount('student')}>
+            <UserRound size={17} aria-hidden="true" />
+            <span>
+              <strong>Student demo</strong>
+              <small>student@example.com</small>
+            </span>
+          </button>
+          <button type="button" onClick={() => fillDemoAccount('counselor')}>
+            <ShieldCheck size={17} aria-hidden="true" />
+            <span>
+              <strong>Counselor/Admin</strong>
+              <small>counselor@example.com</small>
+            </span>
           </button>
         </div>
 

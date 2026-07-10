@@ -1,23 +1,13 @@
-import { Bot, BriefcaseBusiness, Github, LineChart, LogOut, Route, ShieldCheck, Sparkles, UserRound } from 'lucide-react'
+import { CheckCircle2, LogOut, Route, Sparkles } from 'lucide-react'
 import { useState, type ReactNode } from 'react'
-import { useAuth } from '../features/auth/AuthContext'
+import { navItems, type PageKey } from '../app/navigation'
+import { useAuth } from '../features/auth/auth-context'
 
-type PageKey = 'profile' | 'gap' | 'roadmap' | 'mentor' | 'portfolio' | 'market' | 'admin'
-
-const navItems: Array<{ key: PageKey; label: string; description: string; icon: typeof UserRound }> = [
-  { key: 'profile', label: 'Profile', description: 'Career baseline', icon: UserRound },
-  { key: 'gap', label: 'Skill Gap', description: 'Readiness score', icon: LineChart },
-  { key: 'roadmap', label: 'Roadmap', description: 'Learning plan', icon: Route },
-  { key: 'mentor', label: 'AI Mentor', description: 'Weekly guidance', icon: Bot },
-  { key: 'portfolio', label: 'Portfolio', description: 'GitHub evidence', icon: Github },
-  { key: 'market', label: 'Market Pulse', description: 'Hiring signals', icon: BriefcaseBusiness },
-  { key: 'admin', label: 'Admin', description: 'Counselor tools', icon: ShieldCheck },
-]
-
-export function Layout({ renderPage }: { renderPage: (page: PageKey) => ReactNode }) {
+export function Layout({ renderPage }: { renderPage: (page: PageKey, navigateTo: (page: PageKey) => void) => ReactNode }) {
   const { user, logout } = useAuth()
   const [activePage, setActivePage] = useState<PageKey>('profile')
   const activeItem = navItems.find((item) => item.key === activePage) ?? navItems[0]
+  const activeIndex = navItems.findIndex((item) => item.key === activePage)
 
   return (
     <main className="app-shell">
@@ -53,8 +43,12 @@ export function Layout({ renderPage }: { renderPage: (page: PageKey) => ReactNod
         <div className="sidebar-insight">
           <Sparkles size={18} aria-hidden="true" />
           <div>
-            <strong>Next best action</strong>
-            <span>Keep your profile and skill levels current before opening the mentor.</span>
+            <strong>Demo flow</strong>
+            <span>
+              {user?.role === 'COUNSELOR_ADMIN'
+                ? 'Review student progress, then update roles, skills, nodes, or resources.'
+                : 'Profile -> Skill Gap -> Roadmap -> AI Mentor -> Portfolio -> Counselor/Admin.'}
+            </span>
           </div>
         </div>
       </aside>
@@ -76,10 +70,25 @@ export function Layout({ renderPage }: { renderPage: (page: PageKey) => ReactNod
             </button>
           </div>
         </header>
-        {renderPage(activePage)}
+        <section className="flow-strip" aria-label="Demo flow progress">
+          {navItems.map((item, index) => {
+            const Icon = item.icon
+            const isDone = index < activeIndex
+            return (
+              <button
+                type="button"
+                className={activePage === item.key ? 'active' : ''}
+                onClick={() => setActivePage(item.key)}
+                key={item.key}
+              >
+                {isDone ? <CheckCircle2 size={16} aria-hidden="true" /> : <Icon size={16} aria-hidden="true" />}
+                <span>{item.label}</span>
+              </button>
+            )
+          })}
+        </section>
+        {renderPage(activePage, setActivePage)}
       </section>
     </main>
   )
 }
-
-export type { PageKey }

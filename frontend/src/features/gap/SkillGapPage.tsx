@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Bar, BarChart, CartesianGrid, Cell, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
-import { AlertCircle, CheckCircle2, FileText, TrendingUp } from 'lucide-react'
+import { AlertCircle, ArrowRight, CheckCircle2, FileText, TrendingUp } from 'lucide-react'
 import { ApiClientError } from '../../api'
 import type { SkillGapAnalysis } from '../../types'
-import { useAuth } from '../auth/AuthContext'
+import { useAuth } from '../auth/auth-context'
 
 const statusLabels = {
   MATCHED: 'Matched',
@@ -17,7 +17,7 @@ const statusColors = {
   MISSING: '#b42318',
 }
 
-export function SkillGapPage() {
+export function SkillGapPage({ onContinue }: { onContinue?: () => void }) {
   const { request } = useAuth()
   const [analysis, setAnalysis] = useState<SkillGapAnalysis | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -162,6 +162,14 @@ export function SkillGapPage() {
             </tbody>
           </table>
         </div>
+      </section>
+
+      <section className="demo-action-bar" aria-label="Skill gap demo actions">
+        <span>Use the missing and below-level rows as the reason for the generated learning plan.</span>
+        <button className="primary-button" type="button" onClick={onContinue}>
+          Continue to Roadmap
+          <ArrowRight size={18} aria-hidden="true" />
+        </button>
       </section>
     </section>
   )

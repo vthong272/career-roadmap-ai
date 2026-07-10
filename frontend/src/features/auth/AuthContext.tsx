@@ -1,20 +1,10 @@
-import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
+import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import { apiRequest } from '../../api'
+import { demoRequest, demoUserForCredentials, getDemoUser, setDemoStudentUser } from '../../demo-data'
 import type { User } from '../../types'
+import { AuthContext, type AuthContextValue } from './auth-context'
 
 const TOKEN_KEY = 'career-roadmap-ai-token'
-
-interface AuthContextValue {
-  user: User | null
-  token: string | null
-  isBootstrapping: boolean
-  login: (email: string, password: string) => Promise<void>
-  register: (name: string, email: string, password: string) => Promise<void>
-  logout: () => void
-  request: <T>(path: string, options?: RequestInit) => Promise<T>
-}
-
-const AuthContext = createContext<AuthContextValue | null>(null)
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [token, setToken] = useState(() => localStorage.getItem(TOKEN_KEY))
@@ -23,6 +13,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!token) {
+      setIsBootstrapping(false)
+      return
+    }
+
+    const demoUser = getDemoUser(token)
+    if (demoUser) {
+      setUser(demoUser)
       setIsBootstrapping(false)
       return
     }
@@ -43,22 +40,47 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       token,
       isBootstrapping,
       async login(email, password) {
-        const payload = await apiRequest<{ token: string; user: User }>('/auth/login', {
-          method: 'POST',
-          body: JSON.stringify({ email, password }),
-        })
-        localStorage.setItem(TOKEN_KEY, payload.token)
-        setToken(payload.token)
-        setUser(payload.user)
+        try {
+          const payload = await apiRequest<{ token: string; user: User }>('/auth/login', {
+            method: 'POST',
+            body: JSON.stringify({ email, password }),
+          })
+          localStorage.setItem(TOKEN_KEY, payload.token)
+          setToken(payload.token)
+          setUser(payload.user)
+        } catch (error) {
+          const demoUser = demoUserForCredentials(email, password)
+          if (!demoUser) throw error
+          const demoToken = demoUser.role === 'COUNSELOR_ADMIN' ? 'demo:counselor' : 'demo:student'
+          localStorage.setItem(TOKEN_KEY, demoToken)
+          setToken(demoToken)
+          setUser(demoUser)
+        }
       },
       async register(name, email, password) {
-        const payload = await apiRequest<{ token: string; user: User }>('/auth/register', {
-          method: 'POST',
-          body: JSON.stringify({ name, email, password }),
-        })
-        localStorage.setItem(TOKEN_KEY, payload.token)
-        setToken(payload.token)
-        setUser(payload.user)
+        try {
+          const payload = await apiRequest<{ token: string; user: User }>('/auth/register', {
+            method: 'POST',
+            body: JSON.stringify({ name, email, password }),
+          })
+          localStorage.setItem(TOKEN_KEY, payload.token)
+          setToken(payload.token)
+          setUser(payload.user)
+        } catch (error) {
+          if (password.length < 8 || name.trim().length < 2 || !email.includes('@')) throw error
+          const demoUser: User = {
+            id: 'demo-registered-student',
+            email: email.toLowerCase(),
+            name,
+            role: 'STUDENT',
+            avatarUrl: null,
+          }
+          const demoToken = 'demo:student:registered'
+          setDemoStudentUser(demoUser)
+          localStorage.setItem(TOKEN_KEY, demoToken)
+          setToken(demoToken)
+          setUser(demoUser)
+        }
       },
       logout() {
         localStorage.removeItem(TOKEN_KEY)
@@ -66,6 +88,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setUser(null)
       },
       request<T>(path: string, options: RequestInit = {}) {
+        if (token?.startsWith('demo:')) {
+          return demoRequest<T>(path, options)
+        }
         return apiRequest<T>(path, { ...options, token })
       },
     }),
@@ -73,12 +98,4 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
-}
-
-export function useAuth() {
-  const value = useContext(AuthContext)
-  if (!value) {
-    throw new Error('useAuth must be used inside AuthProvider')
-  }
-  return value
 }

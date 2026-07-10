@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
-import { AlertCircle, CheckCircle2, Clock, ExternalLink, Route } from 'lucide-react'
+import { AlertCircle, ArrowRight, CheckCircle2, Clock, ExternalLink, Route } from 'lucide-react'
 import { ApiClientError } from '../../api'
 import type { RoadmapResponse, RoadmapStatus } from '../../types'
-import { useAuth } from '../auth/AuthContext'
+import { useAuth } from '../auth/auth-context'
 
 const statusOptions: RoadmapStatus[] = ['NOT_STARTED', 'IN_PROGRESS', 'COMPLETED']
 
@@ -10,7 +10,7 @@ function statusLabel(status: RoadmapStatus) {
   return status.replace('_', ' ')
 }
 
-export function RoadmapPage() {
+export function RoadmapPage({ onContinue }: { onContinue?: () => void }) {
   const { request } = useAuth()
   const [roadmap, setRoadmap] = useState<RoadmapResponse | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -149,6 +149,14 @@ export function RoadmapPage() {
             </div>
           </article>
         ))}
+      </section>
+
+      <section className="demo-action-bar" aria-label="Roadmap demo actions">
+        <span>Mark one node in progress or completed, then ask the AI mentor what to prioritize next.</span>
+        <button className="primary-button" type="button" onClick={onContinue}>
+          Continue to AI Mentor
+          <ArrowRight size={18} aria-hidden="true" />
+        </button>
       </section>
     </section>
   )

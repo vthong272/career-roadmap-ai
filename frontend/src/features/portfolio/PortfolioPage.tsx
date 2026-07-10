@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useState } from 'react'
-import { AlertCircle, ExternalLink, Github, RefreshCw, Share2, Star } from 'lucide-react'
+import { AlertCircle, ArrowRight, ExternalLink, Github, RefreshCw, Share2, Star } from 'lucide-react'
 import { ApiClientError } from '../../api'
 import type { GitHubPortfolio } from '../../types'
-import { useAuth } from '../auth/AuthContext'
+import { useAuth } from '../auth/auth-context'
 
-export function PortfolioPage() {
+export function PortfolioPage({ onContinue }: { onContinue?: () => void }) {
   const { request } = useAuth()
   const [portfolio, setPortfolio] = useState<GitHubPortfolio | null>(null)
   const [username, setUsername] = useState('')
@@ -104,6 +104,14 @@ export function PortfolioPage() {
           <p>Enter a GitHub username to fetch public repositories and generate portfolio summaries.</p>
         </section>
       )}
+
+      <section className="demo-action-bar" aria-label="Portfolio demo actions">
+        <span>After syncing evidence, compare your target role against live job-market demand.</span>
+        <button className="primary-button" type="button" onClick={onContinue}>
+          Continue to Market Pulse
+          <ArrowRight size={18} aria-hidden="true" />
+        </button>
+      </section>
     </section>
   )
 }

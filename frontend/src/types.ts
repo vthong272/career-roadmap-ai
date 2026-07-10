@@ -120,6 +120,17 @@ export interface ChatMessage {
   createdAt: string
 }
 
+export interface LearningPlan {
+  horizonDays: 7 | 30
+  focus: string
+  items: Array<{
+    dayRange: string
+    title: string
+    tasks: string[]
+    evidence: string
+  }>
+}
+
 export interface GitHubRepository {
   id: string
   name: string
@@ -152,16 +163,24 @@ export interface GitHubPortfolio {
 
 export interface JobPost {
   id: string
+  externalId: string | null
   title: string
   company: string
   location: string
   source: string
+  salary: string | null
+  skills: string[]
+  url: string | null
   description: string
   postedAt: string
+  fetchedAt: string
 }
 
 export interface MarketPulse {
   keywords: Array<{ keyword: string; mentions: number; jobCount: number }>
+  roleTrends: Array<{ skill: string; mentions: number; jobCount: number; coverage: number }>
+  suggestions: Array<{ skill: string; priority: 'HIGH' | 'MEDIUM'; reason: string; suggestedNode: string }>
+  sources: string[]
   posts: JobPost[]
 }
 

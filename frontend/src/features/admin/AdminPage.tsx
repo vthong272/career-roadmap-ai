@@ -3,7 +3,7 @@ import type { ReactNode } from 'react'
 import { Plus, ShieldCheck } from 'lucide-react'
 import { ApiClientError } from '../../api'
 import type { AdminSummary, CareerRole, Skill } from '../../types'
-import { useAuth } from '../auth/AuthContext'
+import { useAuth } from '../auth/auth-context'
 
 interface ManagementRole extends CareerRole {
   learningNodes: Array<{ id: string; title: string; resources: Array<{ id: string; title: string }> }>

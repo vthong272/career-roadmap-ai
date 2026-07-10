@@ -1,12 +1,12 @@
 import { useEffect, useMemo, useState } from 'react'
-import { BookOpen, BriefcaseBusiness, Save, Upload, UserRound } from 'lucide-react'
+import { ArrowRight, BookOpen, BriefcaseBusiness, Save, Sparkles, Upload, UserRound } from 'lucide-react'
 import { ApiClientError } from '../../api'
 import type { CareerRole, ProfileResponse, Skill, SkillLevel } from '../../types'
-import { useAuth } from '../auth/AuthContext'
+import { useAuth } from '../auth/auth-context'
 
 const levels: SkillLevel[] = ['BEGINNER', 'INTERMEDIATE', 'ADVANCED']
 
-export function ProfilePage() {
+export function ProfilePage({ onContinue }: { onContinue?: () => void }) {
   const { request } = useAuth()
   const [profile, setProfile] = useState<ProfileResponse | null>(null)
   const [skills, setSkills] = useState<Skill[]>([])
@@ -120,6 +120,36 @@ export function ProfilePage() {
     }
   }
 
+  function fillDemoProfile() {
+    const targetRole = roles.find((role) => role.slug === 'backend-developer') ?? roles[0]
+    const demoLevels: Record<string, SkillLevel> = {
+      JavaScript: 'INTERMEDIATE',
+      TypeScript: 'BEGINNER',
+      'Node.js': 'BEGINNER',
+      PostgreSQL: 'BEGINNER',
+      'Git/GitHub': 'INTERMEDIATE',
+      Testing: 'BEGINNER',
+    }
+
+    setForm({
+      headline: 'Software engineering student interested in backend systems',
+      location: 'Ho Chi Minh City',
+      university: 'FPT University',
+      major: 'Software Engineering',
+      graduationYear: '2027',
+      gpa: '3.35',
+      careerInterests: 'Backend Developer, Cloud APIs, Database Design',
+      courses: 'PRN212|.NET and backend fundamentals|B+\nSWP391|Software development project|A',
+      transcriptName: 'manual-entry',
+      targetRoleId: targetRole?.id ?? '',
+    })
+    setSkillSelections(
+      Object.fromEntries(skills.filter((skill) => demoLevels[skill.name]).map((skill) => [skill.id, demoLevels[skill.name]])),
+    )
+    setMessage('Demo profile filled. Save it before opening skill gap.')
+    setError(null)
+  }
+
   if (!profile) {
     return <section className="panel">Loading profile...</section>
   }
@@ -167,6 +197,17 @@ export function ProfilePage() {
           {error ?? message}
         </p>
       )}
+
+      <section className="demo-action-bar" aria-label="Profile demo actions">
+        <button className="secondary-button" type="button" onClick={fillDemoProfile} disabled={roles.length === 0 || skills.length === 0}>
+          <Sparkles size={18} aria-hidden="true" />
+          Fill demo profile
+        </button>
+        <button className="primary-button" type="button" onClick={onContinue}>
+          Continue to Skill Gap
+          <ArrowRight size={18} aria-hidden="true" />
+        </button>
+      </section>
 
       <section className="form-section">
         <div>

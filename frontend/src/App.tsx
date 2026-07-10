@@ -1,8 +1,10 @@
 import { Suspense, lazy } from 'react'
 import { AuthPanel } from './features/auth/AuthPanel'
-import { AuthProvider, useAuth } from './features/auth/AuthContext'
+import { AuthProvider } from './features/auth/AuthContext'
+import { useAuth } from './features/auth/auth-context'
 import { ProfilePage } from './features/profile/ProfilePage'
-import { Layout, type PageKey } from './components/Layout'
+import { Layout } from './components/Layout'
+import { pageLabels, type PageKey } from './app/navigation'
 import './index.css'
 
 const SkillGapPage = lazy(() => import('./features/gap/SkillGapPage').then((module) => ({ default: module.SkillGapPage })))
@@ -15,16 +17,6 @@ const PublicPortfolioPage = lazy(() =>
 const MarketPulsePage = lazy(() => import('./features/market/MarketPulsePage').then((module) => ({ default: module.MarketPulsePage })))
 const AdminPage = lazy(() => import('./features/admin/AdminPage').then((module) => ({ default: module.AdminPage })))
 
-const pageLabels: Record<PageKey, string> = {
-  profile: 'Profile',
-  gap: 'Skill Gap',
-  roadmap: 'Roadmap',
-  mentor: 'AI Mentor',
-  portfolio: 'Portfolio',
-  market: 'Market Pulse',
-  admin: 'Admin',
-}
-
 function Workspace() {
   const { user, isBootstrapping } = useAuth()
 
@@ -36,42 +28,42 @@ function Workspace() {
     return <AuthPanel />
   }
 
-  function renderPage(page: PageKey) {
+  function renderPage(page: PageKey, navigateTo: (page: PageKey) => void) {
     if (page === 'profile') {
-      return <ProfilePage />
+      return <ProfilePage onContinue={() => navigateTo('gap')} />
     }
     if (page === 'gap') {
       return (
         <Suspense fallback={<section className="panel">Loading skill gap...</section>}>
-          <SkillGapPage />
+          <SkillGapPage onContinue={() => navigateTo('roadmap')} />
         </Suspense>
       )
     }
     if (page === 'roadmap') {
       return (
         <Suspense fallback={<section className="panel">Loading roadmap...</section>}>
-          <RoadmapPage />
+          <RoadmapPage onContinue={() => navigateTo('mentor')} />
         </Suspense>
       )
     }
     if (page === 'mentor') {
       return (
         <Suspense fallback={<section className="panel">Loading mentor...</section>}>
-          <MentorPage />
+          <MentorPage onContinue={() => navigateTo('portfolio')} />
         </Suspense>
       )
     }
     if (page === 'portfolio') {
       return (
         <Suspense fallback={<section className="panel">Loading portfolio...</section>}>
-          <PortfolioPage />
+          <PortfolioPage onContinue={() => navigateTo('market')} />
         </Suspense>
       )
     }
     if (page === 'market') {
       return (
         <Suspense fallback={<section className="panel">Loading market pulse...</section>}>
-          <MarketPulsePage />
+          <MarketPulsePage onContinue={() => navigateTo('admin')} />
         </Suspense>
       )
     }

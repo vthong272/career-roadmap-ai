@@ -1,15 +1,17 @@
 import { useEffect, useRef, useState } from 'react'
-import { AlertCircle, Bot, SendHorizontal, UserRound } from 'lucide-react'
+import { AlertCircle, ArrowRight, Bot, CalendarDays, SendHorizontal, UserRound } from 'lucide-react'
 import { ApiClientError } from '../../api'
-import type { ChatMessage } from '../../types'
-import { useAuth } from '../auth/AuthContext'
+import type { ChatMessage, LearningPlan } from '../../types'
+import { useAuth } from '../auth/auth-context'
 
-export function MentorPage() {
+export function MentorPage({ onContinue }: { onContinue?: () => void }) {
   const { request } = useAuth()
   const [history, setHistory] = useState<ChatMessage[]>([])
   const [message, setMessage] = useState('How should I prioritize my roadmap this week?')
+  const [plan, setPlan] = useState<LearningPlan | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [isSending, setIsSending] = useState(false)
+  const [planningDays, setPlanningDays] = useState<7 | 30 | null>(null)
   const endRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
@@ -39,6 +41,22 @@ export function MentorPage() {
       setError(err instanceof ApiClientError ? err.message : 'Could not send message')
     } finally {
       setIsSending(false)
+    }
+  }
+
+  async function loadPlan(days: 7 | 30) {
+    setError(null)
+    setPlanningDays(days)
+    try {
+      const payload = await request<{ plan: LearningPlan }>('/mentor/plan', {
+        method: 'POST',
+        body: JSON.stringify({ days }),
+      })
+      setPlan(payload.plan)
+    } catch (err) {
+      setError(err instanceof ApiClientError ? err.message : 'Could not generate learning plan')
+    } finally {
+      setPlanningDays(null)
     }
   }
 
@@ -104,6 +122,54 @@ export function MentorPage() {
           {isSending ? 'Sending...' : 'Send'}
         </button>
       </form>
+
+      <section className="mentor-plan-panel" aria-labelledby="mentor-plan-title">
+        <div className="section-title">
+          <CalendarDays size={20} aria-hidden="true" />
+          <h2 id="mentor-plan-title">Learning plan</h2>
+        </div>
+        <div className="plan-actions">
+          <button className="secondary-button" type="button" onClick={() => void loadPlan(7)} disabled={planningDays !== null}>
+            7-day plan
+          </button>
+          <button className="secondary-button" type="button" onClick={() => void loadPlan(30)} disabled={planningDays !== null}>
+            30-day plan
+          </button>
+        </div>
+        {planningDays && <p className="topbar-copy">Generating {planningDays}-day plan...</p>}
+        {plan ? (
+          <div className="learning-plan">
+            <div>
+              <span className="status-pill">{plan.horizonDays} days</span>
+              <p>{plan.focus}</p>
+            </div>
+            <div className="plan-grid">
+              {plan.items.map((item) => (
+                <article className="plan-card" key={`${item.dayRange}-${item.title}`}>
+                  <span>{item.dayRange}</span>
+                  <h3>{item.title}</h3>
+                  <ul>
+                    {item.tasks.map((task) => (
+                      <li key={task}>{task}</li>
+                    ))}
+                  </ul>
+                  <p>{item.evidence}</p>
+                </article>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <p className="topbar-copy">Generate a short sprint or 30-day plan from your profile, skill gap, and roadmap status.</p>
+        )}
+      </section>
+
+      <section className="demo-action-bar" aria-label="Mentor demo actions">
+        <span>After one mentor answer, sync GitHub to connect learning progress with portfolio evidence.</span>
+        <button className="primary-button" type="button" onClick={onContinue}>
+          Continue to Portfolio
+          <ArrowRight size={18} aria-hidden="true" />
+        </button>
+      </section>
     </section>
   )
 }
