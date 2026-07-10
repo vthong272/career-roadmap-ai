@@ -210,10 +210,15 @@ model GitHubRepository {
 
 model JobPost {
   id          String   @id @default(cuid())
+  externalId  String?  @unique
   title       String
   company     String
   location    String
   source      String
+  salary      String?
+  skills      String[] @default([])
+  url         String?
   description String
   postedAt    DateTime @default(now())
+  fetchedAt   DateTime @default(now())
 }

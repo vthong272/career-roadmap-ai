@@ -160,13 +160,73 @@ const resourcesFor = (skill: string) => [
 ];
 
 const jobPosts = [
-  ['Junior React Developer', 'FPT Software', 'Ho Chi Minh City', 'Mock Board', 'React TypeScript JavaScript HTML CSS REST API Git GitHub testing'],
-  ['Backend Node.js Intern', 'NashTech', 'Ho Chi Minh City', 'Mock Board', 'Node.js Express PostgreSQL Prisma Docker SQL REST API testing'],
-  ['Java Spring Boot Developer', 'TMA Solutions', 'Ho Chi Minh City', 'Mock Board', 'Java Spring Boot SQL Docker AWS CI/CD Git'],
-  ['DevOps Fresher', 'VNG', 'Ho Chi Minh City', 'Mock Board', 'Docker CI/CD AWS Linux Git GitHub monitoring SQL'],
-  ['Data Engineer Intern', 'KMS Technology', 'Da Nang', 'Mock Board', 'Python SQL PostgreSQL Data Modeling Docker AWS ETL'],
-  ['QA Automation Engineer', 'Axon Active', 'Da Nang', 'Mock Board', 'Testing Playwright JavaScript SQL CI/CD Git automation']
-] as const;
+  {
+    externalId: 'seed:topcv:junior-react-developer',
+    title: 'Junior React Developer',
+    company: 'FPT Software',
+    location: 'Ho Chi Minh City',
+    source: 'TopCV',
+    salary: '15M - 25M VND',
+    skills: ['React', 'TypeScript', 'JavaScript', 'Testing'],
+    url: 'https://www.topcv.vn/viec-lam-it-phan-mem-c10026',
+    description: 'React TypeScript JavaScript HTML CSS REST API Git GitHub testing'
+  },
+  {
+    externalId: 'seed:vietnamworks:backend-nodejs-intern',
+    title: 'Backend Node.js Intern',
+    company: 'NashTech',
+    location: 'Ho Chi Minh City',
+    source: 'VietnamWorks',
+    salary: 'Negotiable',
+    skills: ['Node.js', 'Express', 'PostgreSQL', 'Prisma', 'Docker', 'SQL', 'Testing'],
+    url: 'https://www.vietnamworks.com/en',
+    description: 'Node.js Express PostgreSQL Prisma Docker SQL REST API testing'
+  },
+  {
+    externalId: 'seed:careerviet:java-spring-boot-developer',
+    title: 'Java Spring Boot Developer',
+    company: 'TMA Solutions',
+    location: 'Ho Chi Minh City',
+    source: 'CareerViet',
+    salary: '20M - 35M VND',
+    skills: ['Java', 'Spring Boot', 'SQL', 'Docker', 'AWS', 'CI/CD'],
+    url: 'https://careerviet.vn/',
+    description: 'Java Spring Boot SQL Docker AWS CI/CD Git'
+  },
+  {
+    externalId: 'seed:vietnamworks:devops-fresher',
+    title: 'DevOps Fresher',
+    company: 'VNG',
+    location: 'Ho Chi Minh City',
+    source: 'VietnamWorks',
+    salary: '18M - 30M VND',
+    skills: ['Docker', 'CI/CD', 'AWS', 'SQL'],
+    url: 'https://www.vietnamworks.com/en',
+    description: 'Docker CI/CD AWS Linux Git GitHub monitoring SQL'
+  },
+  {
+    externalId: 'seed:topcv:data-engineer-intern',
+    title: 'Data Engineer Intern',
+    company: 'KMS Technology',
+    location: 'Da Nang',
+    source: 'TopCV',
+    salary: '12M - 22M VND',
+    skills: ['Python', 'SQL', 'PostgreSQL', 'Data Modeling', 'Docker', 'AWS'],
+    url: 'https://www.topcv.vn/viec-lam-it-phan-mem-c10026',
+    description: 'Python SQL PostgreSQL Data Modeling Docker AWS ETL'
+  },
+  {
+    externalId: 'seed:careerviet:qa-automation-engineer',
+    title: 'QA Automation Engineer',
+    company: 'Axon Active',
+    location: 'Da Nang',
+    source: 'CareerViet',
+    salary: '16M - 28M VND',
+    skills: ['Testing', 'Playwright', 'JavaScript', 'SQL', 'CI/CD'],
+    url: 'https://careerviet.vn/',
+    description: 'Testing Playwright JavaScript SQL CI/CD Git automation'
+  }
+];
 
 async function resetDatabase() {
   await prisma.gitHubRepository.deleteMany();
@@ -297,15 +357,7 @@ async function main() {
     }
   });
 
-  await prisma.jobPost.createMany({
-    data: jobPosts.map(([title, company, location, source, description]) => ({
-      title,
-      company,
-      location,
-      source,
-      description
-    }))
-  });
+  await prisma.jobPost.createMany({ data: jobPosts });
 }
 
 main()
