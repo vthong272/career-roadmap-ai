@@ -31,7 +31,7 @@ SU26SWP02: Personalized Career Orientation & Learning Roadmap Platform for Softw
 
 - Frontend: React, Vite, TypeScript, Recharts, lucide-react, custom responsive design system.
 - Backend: Node.js, Express, TypeScript, Prisma, PostgreSQL.
-- Integrations: OpenAI/Gemini through `backend/src/services/ai.service.ts`; GitHub REST API through `backend/src/services/github.service.ts`.
+- Integrations: OpenAI/Gemini through the mentor orchestration service; GitHub REST API through `backend/src/services/github.service.ts`.
 - Testing: Vitest unit tests for skill gap, AI fallback, portfolio summary fallback, and market keyword analysis.
 
 ## Local Setup
@@ -84,18 +84,22 @@ Seeded by `npm run prisma:seed`:
 ## Architecture
 
 - `frontend/src/features`: feature pages for auth, profile, gap analysis, roadmap, mentor, portfolio, market, and admin.
+- `frontend/src/app`: application composition and shared navigation metadata.
 - `frontend/src/api.ts`: typed fetch helper with consistent error handling.
 - `backend/src/routes`: REST API route modules.
-- `backend/src/services`: business logic and integration boundaries.
+- `backend/src/features`: pure domain logic and types for independently testable features.
+- `backend/src/services`: database/external-provider orchestration plus compatibility exports.
 - `backend/prisma/schema.prisma`: PostgreSQL data model.
 - `backend/prisma/seed.ts`: roles, skills, learning nodes, learning resources, demo users, and mock job posts.
+
+See [ADR-001](docs/decisions/001-feature-oriented-boundaries.md) for module boundaries and dependency rules.
 
 ## Remaining Limitations
 
 - Google OAuth is implemented as a backend ID-token endpoint; a production Google button/client flow still needs provider setup.
 - AI calls are optional and fall back locally when keys are missing or provider calls fail.
 - Transcript upload is represented by manual course/GPA input and a placeholder filename field.
-- Market Pulse uses seeded mock job posts; the service is structured so a scraper or jobs API can replace the data source later.
+- Market Pulse attempts supported live sources and falls back to curated deterministic posts when sources are unavailable; production use still needs a licensed jobs API or hardened ingestion pipeline.
 - Docker Desktop must be running before applying migrations locally.
 
 ## Suggested CV Bullet Points
