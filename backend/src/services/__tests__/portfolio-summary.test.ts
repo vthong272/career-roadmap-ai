@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { createReadmeFallbackSummary } from '../ai.service.js';
+import { createReadmeFallbackSummary } from '../../features/mentor/mentor-domain.js';
 
 describe('createReadmeFallbackSummary', () => {
   it('extracts an objective and technology signals from README text', () => {
