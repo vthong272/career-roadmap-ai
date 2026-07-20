@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from 'react'
-import { ArrowRight, BookOpen, BriefcaseBusiness, Save, Sparkles, Upload, UserRound } from 'lucide-react'
+import { ArrowRight, BookOpen, BriefcaseBusiness, Save, Sparkles, UserRound } from 'lucide-react'
 import { ApiClientError } from '../../api'
 import type { CareerRole, ProfileResponse, Skill, SkillLevel } from '../../types'
 import { useAuth } from '../auth/auth-context'
+import { buildProfilePayload, validateProfileForm, validateTranscriptFile, type ProfileFormState } from './profile-form'
 
 const levels: SkillLevel[] = ['BEGINNER', 'INTERMEDIATE', 'ADVANCED']
 
@@ -11,7 +12,7 @@ export function ProfilePage({ onContinue }: { onContinue?: () => void }) {
   const [profile, setProfile] = useState<ProfileResponse | null>(null)
   const [skills, setSkills] = useState<Skill[]>([])
   const [roles, setRoles] = useState<CareerRole[]>([])
-  const [form, setForm] = useState({
+  const [form, setForm] = useState<ProfileFormState>({
     headline: '',
     location: '',
     university: '',
@@ -76,40 +77,22 @@ export function ProfilePage({ onContinue }: { onContinue?: () => void }) {
   async function saveProfile() {
     setError(null)
     setMessage(null)
+    const validationError = validateProfileForm(form)
+    if (validationError) {
+      setError(validationError.message)
+      document.getElementById(validationError.field)?.focus()
+      return
+    }
+
     setIsSaving(true)
     try {
       const currentSkills = Object.entries(skillSelections)
         .filter(([, level]) => Boolean(level))
         .map(([skillId, level]) => ({ skillId, level: level as SkillLevel }))
 
-      const courses = form.courses
-        .split('\n')
-        .map((line) => line.trim())
-        .filter(Boolean)
-        .map((line) => {
-          const [code, name, grade] = line.split('|').map((part) => part.trim())
-          return { code, name, grade: grade || undefined }
-        })
-        .filter((course) => course.code && course.name)
-
       const payload = await request<{ profile: ProfileResponse }>('/profile/me', {
         method: 'PATCH',
-        body: JSON.stringify({
-          headline: form.headline || null,
-          location: form.location || null,
-          university: form.university || null,
-          major: form.major || null,
-          graduationYear: form.graduationYear ? Number(form.graduationYear) : null,
-          gpa: form.gpa ? Number(form.gpa) : null,
-          careerInterests: form.careerInterests
-            .split(',')
-            .map((interest) => interest.trim())
-            .filter(Boolean),
-          courses,
-          transcriptName: form.transcriptName || null,
-          targetRoleId: form.targetRoleId || null,
-          currentSkills,
-        }),
+        body: JSON.stringify(buildProfilePayload(form, currentSkills)),
       })
       setProfile(payload.profile)
       setMessage('Profile saved')
@@ -118,6 +101,24 @@ export function ProfilePage({ onContinue }: { onContinue?: () => void }) {
     } finally {
       setIsSaving(false)
     }
+  }
+
+  function selectTranscript(file: File | undefined) {
+    setMessage(null)
+    if (!file) {
+      setForm({ ...form, transcriptName: '' })
+      return
+    }
+
+    const fileError = validateTranscriptFile(file)
+    if (fileError) {
+      setError(fileError)
+      setForm({ ...form, transcriptName: '' })
+      return
+    }
+
+    setError(null)
+    setForm({ ...form, transcriptName: file.name })
   }
 
   function fillDemoProfile() {
@@ -193,7 +194,7 @@ export function ProfilePage({ onContinue }: { onContinue?: () => void }) {
       </section>
 
       {(error || message) && (
-        <p className={error ? 'form-error' : 'form-success'} role="status">
+        <p id="profile-feedback" className={error ? 'form-error' : 'form-success'} role={error ? 'alert' : 'status'}>
           {error ?? message}
         </p>
       )}
@@ -212,29 +213,31 @@ export function ProfilePage({ onContinue }: { onContinue?: () => void }) {
       <section className="form-section">
         <div>
           <h2>Personal information</h2>
-          <p>Stored as the context for gap analysis, roadmap generation, and mentor answers.</p>
+          <p>All fields are required and are used for gap analysis, roadmap generation, and mentor answers.</p>
         </div>
         <div className="form-grid two-columns">
           <label>
-            Headline
-            <input value={form.headline} onChange={(event) => setForm({ ...form, headline: event.target.value })} />
+            Headline *
+            <input id="headline" required value={form.headline} onChange={(event) => setForm({ ...form, headline: event.target.value })} />
           </label>
           <label>
-            Location
-            <input value={form.location} onChange={(event) => setForm({ ...form, location: event.target.value })} />
+            Location *
+            <input id="location" required value={form.location} onChange={(event) => setForm({ ...form, location: event.target.value })} />
           </label>
           <label>
-            University
-            <input value={form.university} onChange={(event) => setForm({ ...form, university: event.target.value })} />
+            University *
+            <input id="university" required value={form.university} onChange={(event) => setForm({ ...form, university: event.target.value })} />
           </label>
           <label>
-            Major
-            <input value={form.major} onChange={(event) => setForm({ ...form, major: event.target.value })} />
+            Major *
+            <input id="major" required value={form.major} onChange={(event) => setForm({ ...form, major: event.target.value })} />
           </label>
           <label>
-            Graduation year
+            Graduation year *
             <input
               type="number"
+              id="graduationYear"
+              required
               min="2020"
               max="2040"
               value={form.graduationYear}
@@ -242,9 +245,11 @@ export function ProfilePage({ onContinue }: { onContinue?: () => void }) {
             />
           </label>
           <label>
-            GPA
+            GPA *
             <input
               type="number"
+              id="gpa"
+              required
               min="0"
               max="4"
               step="0.01"
@@ -262,8 +267,8 @@ export function ProfilePage({ onContinue }: { onContinue?: () => void }) {
         </div>
         <div className="form-grid">
           <label>
-            Target role
-            <select value={form.targetRoleId} onChange={(event) => setForm({ ...form, targetRoleId: event.target.value })}>
+            Target role *
+            <select id="targetRoleId" required value={form.targetRoleId} onChange={(event) => setForm({ ...form, targetRoleId: event.target.value })}>
               <option value="">Choose role</option>
               {roles.map((role) => (
                 <option value={role.id} key={role.id}>
@@ -273,8 +278,10 @@ export function ProfilePage({ onContinue }: { onContinue?: () => void }) {
             </select>
           </label>
           <label>
-            Career interests
+            Career interests *
             <input
+              id="careerInterests"
+              required
               value={form.careerInterests}
               onChange={(event) => setForm({ ...form, careerInterests: event.target.value })}
               placeholder="Backend APIs, Cloud, Data Modeling"
@@ -285,20 +292,19 @@ export function ProfilePage({ onContinue }: { onContinue?: () => void }) {
 
       <section className="form-section">
         <div>
-          <h2>Transcript input</h2>
-          <p>Manual course input keeps the MVP usable until file parsing is added.</p>
+          <h2>Transcript upload</h2>
+          <p>Choose a transcript file. Its name is saved for reference; automatic course parsing is not available yet.</p>
         </div>
         <div className="form-grid">
           <label>
-            Transcript placeholder
-            <span className="input-with-icon">
-              <Upload size={16} aria-hidden="true" />
-              <input
-                value={form.transcriptName}
-                onChange={(event) => setForm({ ...form, transcriptName: event.target.value })}
-                placeholder="manual-entry or transcript-fall-2026.pdf"
-              />
-            </span>
+            Transcript file
+            <input
+              id="transcriptName"
+              type="file"
+              accept=".pdf,.png,.jpg,.jpeg,application/pdf,image/png,image/jpeg"
+              onChange={(event) => selectTranscript(event.target.files?.[0])}
+            />
+            <small>{form.transcriptName ? `Selected: ${form.transcriptName}` : 'PDF, PNG, JPG, or JPEG; maximum 5 MB.'}</small>
           </label>
           <label>
             Courses

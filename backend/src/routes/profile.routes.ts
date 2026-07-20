@@ -13,17 +13,19 @@ const CourseSchema = z.object({
   grade: z.string().max(20).optional()
 });
 
-const ProfileUpdateSchema = z.object({
-  headline: z.string().max(180).nullable().optional(),
-  location: z.string().max(120).nullable().optional(),
-  university: z.string().max(160).nullable().optional(),
-  major: z.string().max(120).nullable().optional(),
-  graduationYear: z.number().int().min(2020).max(2040).nullable().optional(),
-  gpa: z.number().min(0).max(4).nullable().optional(),
-  careerInterests: z.array(z.string().min(1).max(80)).max(10).optional(),
+const requiredText = (max: number) => z.string({ error: 'Please enter a value.' }).trim().min(1, 'Please enter a value.').max(max);
+
+export const ProfileUpdateSchema = z.object({
+  headline: requiredText(180),
+  location: requiredText(120),
+  university: requiredText(160),
+  major: requiredText(120),
+  graduationYear: z.number({ error: 'Enter a valid number.' }).int().min(2020, 'Must be between 2020 and 2040.').max(2040, 'Must be between 2020 and 2040.'),
+  gpa: z.number({ error: 'Enter a valid number.' }).min(0, 'Must be between 0 and 4.').max(4, 'Must be between 0 and 4.'),
+  careerInterests: z.array(z.string().trim().min(1).max(80)).min(1, 'Enter at least one career interest.').max(10),
   courses: z.array(CourseSchema).max(20).optional(),
   transcriptName: z.string().max(180).nullable().optional(),
-  targetRoleId: z.string().nullable().optional(),
+  targetRoleId: z.string({ error: 'Choose a target role.' }).trim().min(1, 'Choose a target role.'),
   currentSkills: z
     .array(
       z.object({

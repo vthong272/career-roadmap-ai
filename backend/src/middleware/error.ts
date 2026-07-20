@@ -1,6 +1,29 @@
 import type { NextFunction, Request, Response } from 'express';
 import { ZodError } from 'zod';
 
+const validationFieldLabels: Record<string, string> = {
+  headline: 'Headline',
+  location: 'Location',
+  university: 'University',
+  major: 'Major',
+  graduationYear: 'Graduation year',
+  gpa: 'GPA',
+  careerInterests: 'Career interests',
+  courses: 'Courses',
+  transcriptName: 'Transcript',
+  targetRoleId: 'Target role',
+  currentSkills: 'Current skills'
+};
+
+export function formatZodValidationMessage(error: ZodError) {
+  const issue = error.issues[0];
+  if (!issue) return 'Please check the submitted information.';
+
+  const field = typeof issue.path[0] === 'string' ? issue.path[0] : '';
+  const label = validationFieldLabels[field] ?? 'Request';
+  return `${label}: ${issue.message}`;
+}
+
 export class ApiError extends Error {
   constructor(
     public readonly statusCode: number,
@@ -21,7 +44,7 @@ export function errorHandler(error: unknown, _req: Request, res: Response, _next
     return res.status(422).json({
       error: {
         code: 'VALIDATION_ERROR',
-        message: 'Invalid request payload.',
+        message: formatZodValidationMessage(error),
         details: error.flatten()
       }
     });
